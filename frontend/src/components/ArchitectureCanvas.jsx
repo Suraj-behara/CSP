@@ -61,7 +61,7 @@ export const ArchitectureCanvas = ({
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
           <Box>
             <Chip
-              label="Stretch Feature 1 — Architecture Canvas"
+              label="Architecture Canvas"
               size="small"
               sx={{ backgroundColor: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', fontWeight: 700, mb: 1 }}
             />

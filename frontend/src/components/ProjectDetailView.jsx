@@ -77,7 +77,7 @@ ${(project.report?.recommendations || []).map((r) => `- ${r}`).join('\n')}
             onClick={handleExportSummary}
             sx={{ color: '#818cf8', borderColor: 'rgba(129, 140, 248, 0.3)', textTransform: 'none', borderRadius: 2 }}
           >
-            Export Summary (Stretch Feature 2)
+            Export Summary
           </Button>
         </Stack>
       </Box>
@@ -151,11 +151,11 @@ ${(project.report?.recommendations || []).map((r) => `- ${r}`).join('\n')}
               '& .MuiTabs-indicator': { backgroundColor: '#818cf8', height: 3 }
             }}
           >
-            <Tab icon={<Layers size={18} />} iconPosition="start" label="Feature 3 — Multi-Cloud Scorecard" />
-            <Tab icon={<Activity size={18} />} iconPosition="start" label="Feature 4 — Intelligence Report" />
+            <Tab icon={<Layers size={18} />} iconPosition="start" label="Multi-Cloud Decision Scorecard" />
+            <Tab icon={<Activity size={18} />} iconPosition="start" label="Architecture Intelligence Report" />
             <Tab icon={<Compass size={18} />} iconPosition="start" label="Canvas Topology" />
-            <Tab icon={<FileCode size={18} />} iconPosition="start" label="Feature 5 — SAM Generator" />
-            <Tab icon={<Bot size={18} />} iconPosition="start" label="Feature 6 — Bedrock Mentor" />
+            <Tab icon={<FileCode size={18} />} iconPosition="start" label="IaC & Terraform Generator" />
+            <Tab icon={<Bot size={18} />} iconPosition="start" label="Bedrock Cloud Mentor" />
           </Tabs>
         </Box>
       </Paper>
@@ -179,7 +179,13 @@ ${(project.report?.recommendations || []).map((r) => `- ${r}`).join('\n')}
             patternName={project.architecture?.patternName}
           />
         )}
-        {activeTab === 3 && <DeploymentGenerator samTemplate={project.samTemplate} projectTitle={project.projectTitle} />}
+        {activeTab === 3 && (
+          <DeploymentGenerator
+            samTemplate={project.samTemplate}
+            terraformTemplate={project.terraformTemplate}
+            projectTitle={project.projectTitle}
+          />
+        )}
         {activeTab === 4 && <AIMentorChat contextResult={project} />}
       </Box>
     </Container>

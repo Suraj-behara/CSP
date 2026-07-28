@@ -5,24 +5,31 @@ import {
   Paper,
   Button,
   Chip,
-  Stack
+  Stack,
+  Tabs,
+  Tab
 } from '@mui/material';
-import { Copy, Download, Check, FileCode } from 'lucide-react';
+import { Copy, Download, Check, FileCode, Layers } from 'lucide-react';
 
-export const DeploymentGenerator = ({ samTemplate, projectTitle }) => {
+export const DeploymentGenerator = ({ samTemplate, terraformTemplate, projectTitle }) => {
+  const [activeFormat, setActiveFormat] = useState('sam'); // 'sam' | 'terraform'
   const [copied, setCopied] = useState(false);
 
+  const activeCode = activeFormat === 'sam' ? (samTemplate || '') : (terraformTemplate || '');
+  const activeFileName = activeFormat === 'sam' ? 'template.yaml' : 'main.tf';
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(samTemplate);
+    navigator.clipboard.writeText(activeCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleDownload = () => {
     const element = document.createElement('a');
-    const file = new Blob([samTemplate], { type: 'text/yaml' });
+    const mimeType = activeFormat === 'sam' ? 'text/yaml' : 'text/plain';
+    const file = new Blob([activeCode], { type: mimeType });
     element.href = URL.createObjectURL(file);
-    element.download = `${(projectTitle || 'template').toLowerCase().replace(/[^a-z0-9]/g, '-')}-template.yaml`;
+    element.download = `${(projectTitle || 'infrastructure').toLowerCase().replace(/[^a-z0-9]/g, '-')}-${activeFileName}`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -44,14 +51,14 @@ export const DeploymentGenerator = ({ samTemplate, projectTitle }) => {
           <Box>
             <Chip
               icon={<FileCode size={16} color="#34d399" />}
-              label="Feature 5 — Infrastructure-as-Code Generator"
+              label="Infrastructure-as-Code & Terraform Generator"
               sx={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', fontWeight: 700, mb: 1.5 }}
             />
             <Typography variant="h4" fontWeight={800} sx={{ color: '#f8fafc' }}>
-              AWS SAM / CloudFormation Infrastructure Template
+              Infrastructure-as-Code Template Generator
             </Typography>
-            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-              Production-ready deployment template configured with IAM policies, DynamoDB, API Gateway, & Bedrock permissions.
+            <Typography variant="body2" sx={{ color: '#94a3b8', mt: 0.5 }}>
+              Production-ready deployment templates configured for AWS SAM & HashiCorp Terraform (HCL). Generated via AI when API connected, or deterministically compiled locally.
             </Typography>
           </Box>
 
@@ -68,7 +75,7 @@ export const DeploymentGenerator = ({ samTemplate, projectTitle }) => {
                 borderRadius: 2.5
               }}
             >
-              {copied ? 'Copied YAML!' : 'Copy Template'}
+              {copied ? `Copied ${activeFileName}!` : `Copy ${activeFileName}`}
             </Button>
 
             <Button
@@ -84,13 +91,13 @@ export const DeploymentGenerator = ({ samTemplate, projectTitle }) => {
                 boxShadow: '0 10px 20px rgba(52, 211, 153, 0.3)'
               }}
             >
-              Download template.yaml
+              Download {activeFileName}
             </Button>
           </Stack>
         </Box>
       </Paper>
 
-      {/* Code Editor Window */}
+      {/* Code Format Switcher & Editor Window */}
       <Paper
         sx={{
           borderRadius: 3,
@@ -99,38 +106,73 @@ export const DeploymentGenerator = ({ samTemplate, projectTitle }) => {
           overflow: 'hidden'
         }}
       >
-        {/* Top Code Header Bar */}
+        {/* Format Selector Bar */}
         <Box
           sx={{
             px: 3,
-            py: 1.5,
+            py: 1,
             backgroundColor: '#0f172a',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2
           }}
         >
-          <Typography variant="caption" sx={{ color: '#818cf8', fontWeight: 700, fontFamily: 'monospace' }}>
-            template.yaml — AWS SAM / CloudFormation
-          </Typography>
-          <Chip label="Valid YAML 1.2" size="small" sx={{ height: 20, fontSize: '0.65rem', backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399' }} />
+          <Tabs
+            value={activeFormat}
+            onChange={(_, val) => setActiveFormat(val)}
+            sx={{
+              minHeight: 40,
+              '& .MuiTab-root': {
+                minHeight: 40,
+                color: '#94a3b8',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                textTransform: 'none',
+                '&.Mui-selected': { color: '#34d399' }
+              },
+              '& .MuiTabs-indicator': { backgroundColor: '#34d399' }
+            }}
+          >
+            <Tab value="sam" label="AWS SAM / CloudFormation (YAML)" />
+            <Tab value="terraform" label="HashiCorp Terraform (HCL main.tf)" />
+          </Tabs>
+
+          <Chip
+            label={activeFormat === 'sam' ? 'Valid YAML 1.2' : 'Valid HCL 2.0'}
+            size="small"
+            sx={{ height: 22, fontSize: '0.7rem', backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', fontWeight: 700 }}
+          />
         </Box>
 
-        {/* Code Content Box */}
+        {/* Code Content Box (Strict Left Aligned) */}
         <Box
           sx={{
             p: 3,
-            maxHeight: 500,
+            maxHeight: 520,
+            overflowX: 'auto',
             overflowY: 'auto',
-            fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
-            fontSize: '0.9rem',
-            lineHeight: 1.6,
-            color: '#cbd5e1',
-            whiteSpace: 'pre-wrap'
+            textAlign: 'left !important',
+            direction: 'ltr !important'
           }}
         >
-          {samTemplate}
+          <pre
+            style={{
+              margin: 0,
+              padding: 0,
+              textAlign: 'left',
+              fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
+              fontSize: '0.88rem',
+              lineHeight: 1.6,
+              color: '#cbd5e1',
+              whiteSpace: 'pre',
+              direction: 'ltr'
+            }}
+          >
+            {activeCode}
+          </pre>
         </Box>
       </Paper>
     </Box>

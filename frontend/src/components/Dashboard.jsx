@@ -293,6 +293,9 @@ export const Dashboard = ({
                 border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 3,
                 cursor: 'pointer',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                   borderColor: '#818cf8',
@@ -301,15 +304,17 @@ export const Dashboard = ({
               }}
               onClick={() => onLoadSample('serverless-ai')}
             >
-              <CardContent sx={{ p: 3 }}>
-                <Chip label="AI Workload" size="small" sx={{ backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', fontWeight: 700, mb: 1.5 }} />
-                <Typography variant="h6" fontWeight={700} sx={{ color: '#f8fafc', mb: 1 }}>
-                  Generative AI Customer Support Bot
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#94a3b8', mb: 2 }}>
-                  Medium traffic AI chatbot requiring low latency, serverless Bedrock LLM agent, and HIPAA compliance.
-                </Typography>
-                <Button size="small" endIcon={<ArrowRight size={16} />} sx={{ color: '#818cf8', fontWeight: 600, p: 0 }}>
+              <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <Box>
+                  <Chip label="AI Workload" size="small" sx={{ backgroundColor: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', fontWeight: 700, mb: 1.5 }} />
+                  <Typography variant="h6" fontWeight={700} sx={{ color: '#f8fafc', mb: 1 }}>
+                    Generative AI Customer Support Bot
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#94a3b8', mb: 2 }}>
+                    Medium traffic AI chatbot requiring low latency, serverless Bedrock LLM agent, and HIPAA compliance.
+                  </Typography>
+                </Box>
+                <Button size="small" endIcon={<ArrowRight size={16} />} sx={{ color: '#818cf8', fontWeight: 600, p: 0, alignSelf: 'flex-start' }}>
                   Analyze Sample
                 </Button>
               </CardContent>
@@ -323,6 +328,9 @@ export const Dashboard = ({
                 border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 3,
                 cursor: 'pointer',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                   borderColor: '#38bdf8',
@@ -331,15 +339,17 @@ export const Dashboard = ({
               }}
               onClick={() => onLoadSample('high-traffic-web')}
             >
-              <CardContent sx={{ p: 3 }}>
-                <Chip label="Web Application" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontWeight: 700, mb: 1.5 }} />
-                <Typography variant="h6" fontWeight={700} sx={{ color: '#f8fafc', mb: 1 }}>
-                  High Traffic E-Commerce Platform
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#94a3b8', mb: 2 }}>
-                  100k+ daily users dynamic web app needing sub-100ms response time, PCI DSS compliance, and auto-scaling.
-                </Typography>
-                <Button size="small" endIcon={<ArrowRight size={16} />} sx={{ color: '#38bdf8', fontWeight: 600, p: 0 }}>
+              <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <Box>
+                  <Chip label="Web Application" size="small" sx={{ backgroundColor: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', fontWeight: 700, mb: 1.5 }} />
+                  <Typography variant="h6" fontWeight={700} sx={{ color: '#f8fafc', mb: 1 }}>
+                    High Traffic E-Commerce Platform
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#94a3b8', mb: 2 }}>
+                    100k+ daily users dynamic web app needing sub-100ms response time, PCI DSS compliance, and auto-scaling.
+                  </Typography>
+                </Box>
+                <Button size="small" endIcon={<ArrowRight size={16} />} sx={{ color: '#38bdf8', fontWeight: 600, p: 0, alignSelf: 'flex-start' }}>
                   Analyze Sample
                 </Button>
               </CardContent>
@@ -353,6 +363,9 @@ export const Dashboard = ({
                 border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: 3,
                 cursor: 'pointer',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                   borderColor: '#34d399',
@@ -361,15 +374,17 @@ export const Dashboard = ({
               }}
               onClick={() => onLoadSample('compliance-healthcare')}
             >
-              <CardContent sx={{ p: 3 }}>
-                <Chip label="Data Analytics" size="small" sx={{ backgroundColor: 'rgba(52, 211, 153, 0.2)', color: '#34d399', fontWeight: 700, mb: 1.5 }} />
-                <Typography variant="h6" fontWeight={700} sx={{ color: '#f8fafc', mb: 1 }}>
-                  Healthcare Data Pipeline & Analytics
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#94a3b8', mb: 2 }}>
-                  Enterprise batch data pipeline with strict GDPR & HIPAA constraints, high budget, and multi-region deployment.
-                </Typography>
-                <Button size="small" endIcon={<ArrowRight size={16} />} sx={{ color: '#34d399', fontWeight: 600, p: 0 }}>
+              <CardContent sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <Box>
+                  <Chip label="Data Analytics" size="small" sx={{ backgroundColor: 'rgba(52, 211, 153, 0.2)', color: '#34d399', fontWeight: 700, mb: 1.5 }} />
+                  <Typography variant="h6" fontWeight={700} sx={{ color: '#f8fafc', mb: 1 }}>
+                    Healthcare Data Pipeline & Analytics
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#94a3b8', mb: 2 }}>
+                    Enterprise batch data pipeline with strict GDPR & HIPAA constraints, high budget, and multi-region deployment.
+                  </Typography>
+                </Box>
+                <Button size="small" endIcon={<ArrowRight size={16} />} sx={{ color: '#34d399', fontWeight: 600, p: 0, alignSelf: 'flex-start' }}>
                   Analyze Sample
                 </Button>
               </CardContent>

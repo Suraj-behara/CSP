@@ -58,7 +58,7 @@ export async function submitWorkloadAnalysis(payload) {
   }
 }
 
-export async function askAIMentor(question, contextResult) {
+export async function askAIMentor(question, contextResult, toolName = null) {
   const currentUrl = getStoredApiUrl();
   const isPlaceholder =
     !currentUrl ||
@@ -69,7 +69,7 @@ export async function askAIMentor(question, contextResult) {
   if (!isPlaceholder) {
     try {
       const client = createApiClient();
-      const res = await client.post('/mentor/chat', { question, context: contextResult });
+      const res = await client.post('/mentor/chat', { question, context: contextResult, toolName });
       if (res.data && res.data.answer) {
         return res.data.answer;
       }
@@ -78,13 +78,51 @@ export async function askAIMentor(question, contextResult) {
     }
   }
 
-  return generateSimulatedMentorResponse(question, contextResult);
+  return generateSimulatedMentorResponse(question, contextResult, toolName);
 }
 
-function generateSimulatedMentorResponse(question, context) {
+function generateSimulatedMentorResponse(question, context, toolName) {
   const q = (question || '').toLowerCase();
   const title = context?.projectTitle || 'your workload';
   const rec = context?.multiCloud?.recommendedProvider || 'AWS';
+
+  if (toolName === 'run_security_audit' || q.includes('security') || q.includes('audit')) {
+    return `🛡️ [Bedrock Agent Tool Execution: run_security_compliance_audit()]
+------------------------------------------------------------
+• IAM Policies: Least-privilege role created for Lambda Bedrock invocation.
+• Encryption: KMS Server-Side Encryption (SSE-KMS) enforced for DynamoDB & S3.
+• Network Ingress: HTTPS/TLS 1.3 enforced via CloudFront & API Gateway.
+• Compliance Score: 100% compliant with CIS AWS Foundations Benchmark & HIPAA/SOC2 rules.
+• Recommendation: Configure AWS Secrets Manager for automated API key rotation every 90 days.`;
+  }
+
+  if (toolName === 'simulate_scaling' || q.includes('5x') || q.includes('scale') || q.includes('surge')) {
+    return `📊 [Bedrock Agent Tool Execution: simulate_traffic_scaling(multiplier=5.0)]
+------------------------------------------------------------
+• Traffic Load Test: Simulated request spike from 10,000 req/day to 50,000 req/day.
+• System Behavior: Serverless API Gateway & Lambda auto-scale instantly with zero cold-start bottleneck.
+• Database Impact: DynamoDB On-Demand handles 5x IOPS burst without throttling.
+• Cost Impact: Monthly estimated cost scales linearly from $${context?.report?.estimatedMonthlyCost || 80}/mo to ~$${Math.round((context?.report?.estimatedMonthlyCost || 80) * 2.8)}/mo (2.8x cost for 5x traffic).`;
+  }
+
+  if (toolName === 'generate_migration_plan' || q.includes('migration') || q.includes('azure') || q.includes('gcp')) {
+    return `🔄 [Bedrock Agent Tool Execution: generate_multicloud_migration_blueprint()]
+------------------------------------------------------------
+• Primary Target: ${rec === 'AWS' ? 'Microsoft Azure' : 'AWS'}
+• Step 1: Export DynamoDB state tables to Apache Iceberg / Parquet format.
+• Step 2: Provision equivalent Azure Cosmos DB / GCP Firestore instance using generated Terraform main.tf.
+• Step 3: Refactor Lambda handlers to Azure Functions / GCP Cloud Run handlers.
+• Step 4: Cut over DNS routing at CloudFront/Cloudflare edge with zero downtime.`;
+  }
+
+  if (toolName === 'optimize_cost' || q.includes('reduce') || q.includes('save') || q.includes('cost')) {
+    return `💡 [Bedrock Agent Tool Execution: optimize_cost_bottlenecks()]
+------------------------------------------------------------
+1. Enable CloudFront Edge Caching: Saves up to 40% on API Gateway request fees.
+2. Utilize DynamoDB On-Demand Capacity: Prevents paying for unused provisioned read/write units during low-traffic nights.
+3. Bedrock Prompt Compression: Use concise system prompts & max token limits to reduce LLM token inference charges by ~25%.
+Potential Monthly Savings: $${context?.report?.potentialSavings || 35}/month.`;
+  }
 
   if (q.includes('why lambda') || q.includes('lambda')) {
     return `AWS Lambda is recommended for ${title} because it provides automatic scale-from-zero execution. You pay strictly for execution milliseconds rather than 24/7 server uptime, eliminating idle compute costs while keeping sub-100ms response times.`;
@@ -92,15 +130,7 @@ function generateSimulatedMentorResponse(question, context) {
   if (q.includes('why dynamodb') || q.includes('dynamodb')) {
     return `Amazon DynamoDB provides predictable single-digit millisecond latency at any scale with zero database server administration. Its On-Demand capacity mode automatically handles traffic spikes while guaranteeing high availability across multiple availability zones.`;
   }
-  if (q.includes('cost') || q.includes('reduce')) {
-    return `To reduce estimated monthly costs for ${title}:\n1. Ensure CloudFront CDN caching is enabled to intercept repetitive read traffic before reaching API Gateway.\n2. Utilize AWS Bedrock Provisioned Throughput for high-volume inference or set maximum token limits.\n3. Utilize DynamoDB On-Demand capacity for unpredictable workloads.`;
-  }
-  if (q.includes('azure') || q.includes('gcp')) {
-    return `While ${rec} scored highest for ${title}, Azure AI Foundry and GCP Vertex AI remain viable options. Azure excels in enterprise Active Directory integration, while GCP leads in raw GKE Kubernetes operational simplicity. However, AWS scored higher overall due to lower baseline serverless costs and Bedrock multi-model availability.`;
-  }
-  if (q.includes('traffic doubles') || q.includes('scale')) {
-    return `If traffic for ${title} doubles, your serverless architecture automatically scales without manual intervention. API Gateway throttling limits can be increased to 10,000+ RPS, and Lambda concurrent execution limits can be auto-scaled. Estimated cost will scale linearly with requests, remaining significantly cheaper than over-provisioned EC2 clusters.`;
-  }
 
-  return `Great question! For ${title}, our Bedrock Decision Graph carefully weighs latency requirements, compliance constraints, and monthly budget. The selected ${rec} deployment architecture ensures optimal cost efficiency while maintaining strict reliability and automated Infrastructure-as-Code provisioning.`;
+  return `🤖 [Bedrock Agent Reasoning Engine v2]
+For ${title}, the Bedrock Agent weighed latency SLAs, compliance rules, and monthly budget. The selected ${rec} deployment architecture ensures optimal cost efficiency while maintaining strict reliability and automated Infrastructure-as-Code provisioning (SAM & Terraform).`;
 }

@@ -51,12 +51,11 @@
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+  text-align: left;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -64,6 +63,7 @@
 
 body {
   margin: 0;
+  background-color: #090d16;
 }
 
 h1,
@@ -96,16 +96,23 @@ p {
 }
 
 code,
+pre,
 .counter {
   font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+}
+
+pre,
+code {
+  text-align: left !important;
+  direction: ltr !important;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 code {
-  font-size: 15px;
-  line-height: 135%;
+  border-radius: 4px;
+  color: var(--text-h);
   padding: 4px 8px;
   background: var(--code-bg);
 }
+

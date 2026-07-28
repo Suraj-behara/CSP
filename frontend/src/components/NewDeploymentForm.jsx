@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import {
+  ListSubheader,
+  Select,
+  FormControl,
   Box,
   Container,
   Paper,
@@ -81,13 +84,24 @@ const OPTIMIZATION_GOALS = [
 ];
 
 const REGIONS = [
-  { group: 'Asia Pacific', items: ['Mumbai (India)', 'Hyderabad (India)', 'Singapore', 'Tokyo', 'Seoul', 'Sydney'] },
-  { group: 'Europe', items: ['Ireland', 'Frankfurt', 'London', 'Paris'] },
-  { group: 'North America', items: ['US East (N. Virginia)', 'US West (Oregon)', 'Canada Central'] },
-  { group: 'Middle East', items: ['Bahrain', 'UAE (Dubai)'] },
-  { group: 'South America', items: ['São Paulo'] },
-  { group: 'Africa', items: ['Cape Town'] },
-  { group: 'Global', items: ['Multi-Region'] }
+  { value: 'Mumbai (India)', group: 'Asia Pacific' },
+  { value: 'Hyderabad (India)', group: 'Asia Pacific' },
+  { value: 'Singapore', group: 'Asia Pacific' },
+  { value: 'Tokyo', group: 'Asia Pacific' },
+  { value: 'Seoul', group: 'Asia Pacific' },
+  { value: 'Sydney', group: 'Asia Pacific' },
+  { value: 'Ireland', group: 'Europe' },
+  { value: 'Frankfurt', group: 'Europe' },
+  { value: 'London', group: 'Europe' },
+  { value: 'Paris', group: 'Europe' },
+  { value: 'US East (N. Virginia)', group: 'North America' },
+  { value: 'US West (Oregon)', group: 'North America' },
+  { value: 'Canada Central', group: 'North America' },
+  { value: 'Bahrain', group: 'Middle East' },
+  { value: 'UAE (Dubai)', group: 'Middle East' },
+  { value: 'São Paulo', group: 'South America' },
+  { value: 'Cape Town', group: 'Africa' },
+  { value: 'Multi-Region', group: 'Global' }
 ];
 
 const COMPLIANCE_LIST = ['None', 'GDPR', 'HIPAA', 'PCI DSS', 'ISO 27001', 'SOC 2', 'DPDP Act', 'Other'];
@@ -95,16 +109,16 @@ const COMPLIANCE_LIST = ['None', 'GDPR', 'HIPAA', 'PCI DSS', 'ISO 27001', 'SOC 2
 export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
-  const [applicationType, setApplicationType] = useState('Dynamic Web App');
+  const [applicationType, setApplicationType] = useState('');
   const [needsAI, setNeedsAI] = useState(true);
   const [serverlessPreference, setServerlessPreference] = useState('Yes');
-  const [expectedTraffic, setExpectedTraffic] = useState('Medium (1,000–10,000 users or requests/day)');
-  const [latencyRequirement, setLatencyRequirement] = useState('Low (100–300 ms)');
-  const [monthlyBudget, setMonthlyBudget] = useState('$500 – $2,000/month');
-  const [targetRegion, setTargetRegion] = useState('US East (N. Virginia)');
+  const [expectedTraffic, setExpectedTraffic] = useState('');
+  const [latencyRequirement, setLatencyRequirement] = useState('');
+  const [monthlyBudget, setMonthlyBudget] = useState('');
+  const [targetRegion, setTargetRegion] = useState('');
   const [complianceRequirements, setComplianceRequirements] = useState(['SOC 2']);
   const [otherCompliance, setOtherCompliance] = useState('');
-  const [optimizationGoal, setOptimizationGoal] = useState('Balanced (Cost + Performance) ⚖️');
+  const [optimizationGoals, setOptimizationGoals] = useState([]);
   const [validationError, setValidationError] = useState('');
 
   // Quick Preset Helper
@@ -119,6 +133,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
       setLatencyRequirement('Low (100–300 ms)');
       setMonthlyBudget('$500 – $2,000/month');
       setComplianceRequirements(['SOC 2', 'HIPAA']);
+      setOptimizationGoals(['Balanced (Cost + Performance) ⚖️', 'High Availability & Reliability 🛡️']);
     } else if (preset === 'serverless-api') {
       setProjectTitle('SaaS API Backend');
       setProjectDescription('High throughput REST API for mobile app client session management.');
@@ -129,6 +144,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
       setLatencyRequirement('Very Low (50–100 ms)');
       setMonthlyBudget('Less than $500/month');
       setComplianceRequirements(['PCI DSS']);
+      setOptimizationGoals(['Minimize Cost 💰', 'Lowest Latency 🌍']);
     } else if (preset === 'enterprise-data') {
       setProjectTitle('Global Analytics Pipeline');
       setProjectDescription('Batch and streaming data pipeline processing daily telemetry records.');
@@ -139,6 +155,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
       setLatencyRequirement('Flexible (> 1000 ms)');
       setMonthlyBudget('$10,000 – $50,000/month');
       setComplianceRequirements(['GDPR', 'ISO 27001']);
+      setOptimizationGoals(['Meet Compliance Requirements 🔒', 'High Availability & Reliability 🛡️']);
     }
   };
 
@@ -162,6 +179,30 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
       setValidationError('Please enter a Project Title.');
       return;
     }
+    if (!applicationType) {
+      setValidationError('Please select an Application Type.');
+      return;
+    }
+    if (!expectedTraffic) {
+      setValidationError('Please select Expected Traffic.');
+      return;
+    }
+    if (!latencyRequirement) {
+      setValidationError('Please select Latency Requirement.');
+      return;
+    }
+    if (!monthlyBudget) {
+      setValidationError('Please select Monthly Budget.');
+      return;
+    }
+    if (!targetRegion) {
+      setValidationError('Please select Target Deployment Region.');
+      return;
+    }
+    if (optimizationGoals.length === 0) {
+      setValidationError('Please select at least one Optimization Goal.');
+      return;
+    }
     setValidationError('');
 
     const payload = {
@@ -176,7 +217,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
       targetRegion,
       complianceRequirements,
       otherCompliance: complianceRequirements.includes('Other') ? otherCompliance : undefined,
-      optimizationGoal
+      optimizationGoal: optimizationGoals.join(', ')
     };
 
     await onSubmit(payload);
@@ -185,15 +226,15 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
   // Normalized Requirement Object Preview
   const normalizedObject = {
     projectTitle: projectTitle || 'Untitled Workload',
-    applicationType,
+    applicationType: applicationType || 'Not specified',
     needsAI,
     serverlessPreference,
-    expectedTraffic: expectedTraffic.split(' ')[0],
-    latencyRequirement: latencyRequirement.split(' ')[0] + ' ' + (latencyRequirement.match(/\((.*?)\)/)?.[1] || ''),
-    monthlyBudget: monthlyBudget.split(' ')[0],
-    targetRegion,
+    expectedTraffic: expectedTraffic ? expectedTraffic.split(' ')[0] : 'Not specified',
+    latencyRequirement: latencyRequirement ? (latencyRequirement.split(' ')[0] + ' ' + (latencyRequirement.match(/\((.*?)\)/)?.[1] || '')) : 'Not specified',
+    monthlyBudget: monthlyBudget ? monthlyBudget.split(' ')[0] : 'Not specified',
+    targetRegion: targetRegion || 'Not specified',
     compliance: complianceRequirements.join(', '),
-    optimizationGoal: optimizationGoal.split(' ')[0]
+    optimizationGoals: optimizationGoals.length > 0 ? optimizationGoals.map((g) => g.split(' ')[0]).join(', ') : 'None'
   };
 
   return (
@@ -236,7 +277,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
             </Box>
             <Box>
               <Chip
-                label="Feature 1 — Discovery Wizard"
+                label="Discovery Wizard"
                 size="small"
                 sx={{ backgroundColor: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', fontWeight: 700, mb: 1 }}
               />
@@ -306,7 +347,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
 
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" fontWeight={600} sx={{ color: '#cbd5e1', mb: 1 }}>
-                      Application Type (Dropdown) *
+                      Application Type *
                     </Typography>
                     <TextField
                       select
@@ -316,7 +357,19 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
                       variant="outlined"
                       size="small"
                       sx={inputStyles}
+                      SelectProps={{
+                        displayEmpty: true,
+                        renderValue: (selected) => {
+                          if (!selected) {
+                            return <Typography variant="body2" sx={{ color: '#94a3b8' }}>Select application type...</Typography>;
+                          }
+                          return selected;
+                        }
+                      }}
                     >
+                      <MenuItem value="" sx={{ color: '#94a3b8' }}>
+                        Select application type...
+                      </MenuItem>
                       {APPLICATION_TYPES.map((type) => (
                         <MenuItem key={type} value={type}>
                           {type}
@@ -359,7 +412,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
 
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
-                    <Paper sx={{ p: 2.5, backgroundColor: 'rgba(15, 23, 42, 0.6)', borderRadius: 3, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <Paper sx={{ p: 2.5, backgroundColor: 'rgba(15, 23, 42, 0.6)', borderRadius: 3, border: '1px solid rgba(255, 255, 255, 0.08)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#f8fafc', mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Cpu size={18} color="#c084fc" /> Requires AI / LLM Integration?
                       </Typography>
@@ -371,7 +424,7 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
-                    <Paper sx={{ p: 2.5, backgroundColor: 'rgba(15, 23, 42, 0.6)', borderRadius: 3, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <Paper sx={{ p: 2.5, backgroundColor: 'rgba(15, 23, 42, 0.6)', borderRadius: 3, border: '1px solid rgba(255, 255, 255, 0.08)', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <Typography variant="subtitle2" fontWeight={700} sx={{ color: '#f8fafc', mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Zap size={18} color="#818cf8" /> Serverless Deployment Preference?
                       </Typography>
@@ -402,9 +455,29 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={4}>
                     <Typography variant="body2" fontWeight={600} sx={{ color: '#cbd5e1', mb: 1 }}>
-                      Expected Traffic (Dropdown)
+                      Expected Traffic
                     </Typography>
-                    <TextField select fullWidth value={expectedTraffic} onChange={(e) => setExpectedTraffic(e.target.value)} variant="outlined" size="small" sx={inputStyles}>
+                    <TextField
+                      select
+                      fullWidth
+                      value={expectedTraffic}
+                      onChange={(e) => setExpectedTraffic(e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      sx={inputStyles}
+                      SelectProps={{
+                        displayEmpty: true,
+                        renderValue: (selected) => {
+                          if (!selected) {
+                            return <Typography variant="body2" sx={{ color: '#94a3b8' }}>Select expected traffic...</Typography>;
+                          }
+                          return selected;
+                        }
+                      }}
+                    >
+                      <MenuItem value="" sx={{ color: '#94a3b8' }}>
+                        Select expected traffic...
+                      </MenuItem>
                       {TRAFFIC_SCALES.map((scale) => (
                         <MenuItem key={scale} value={scale}>
                           {scale}
@@ -415,9 +488,29 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
 
                   <Grid item xs={12} sm={4}>
                     <Typography variant="body2" fontWeight={600} sx={{ color: '#cbd5e1', mb: 1 }}>
-                      Latency Requirement (Dropdown)
+                      Latency Requirement
                     </Typography>
-                    <TextField select fullWidth value={latencyRequirement} onChange={(e) => setLatencyRequirement(e.target.value)} variant="outlined" size="small" sx={inputStyles}>
+                    <TextField
+                      select
+                      fullWidth
+                      value={latencyRequirement}
+                      onChange={(e) => setLatencyRequirement(e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      sx={inputStyles}
+                      SelectProps={{
+                        displayEmpty: true,
+                        renderValue: (selected) => {
+                          if (!selected) {
+                            return <Typography variant="body2" sx={{ color: '#94a3b8' }}>Select latency requirement...</Typography>;
+                          }
+                          return selected;
+                        }
+                      }}
+                    >
+                      <MenuItem value="" sx={{ color: '#94a3b8' }}>
+                        Select latency requirement...
+                      </MenuItem>
                       {LATENCY_OPTIONS.map((lat) => (
                         <MenuItem key={lat} value={lat}>
                           {lat}
@@ -428,9 +521,29 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
 
                   <Grid item xs={12} sm={4}>
                     <Typography variant="body2" fontWeight={600} sx={{ color: '#cbd5e1', mb: 1 }}>
-                      Monthly Budget (Dropdown)
+                      Monthly Budget
                     </Typography>
-                    <TextField select fullWidth value={monthlyBudget} onChange={(e) => setMonthlyBudget(e.target.value)} variant="outlined" size="small" sx={inputStyles}>
+                    <TextField
+                      select
+                      fullWidth
+                      value={monthlyBudget}
+                      onChange={(e) => setMonthlyBudget(e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      sx={inputStyles}
+                      SelectProps={{
+                        displayEmpty: true,
+                        renderValue: (selected) => {
+                          if (!selected) {
+                            return <Typography variant="body2" sx={{ color: '#94a3b8' }}>Select monthly budget...</Typography>;
+                          }
+                          return selected;
+                        }
+                      }}
+                    >
+                      <MenuItem value="" sx={{ color: '#94a3b8' }}>
+                        Select monthly budget...
+                      </MenuItem>
                       {BUDGET_OPTIONS.map((b) => (
                         <MenuItem key={b} value={b}>
                           {b}
@@ -458,40 +571,115 @@ export const NewDeploymentForm = ({ onSubmit, onCancel, loading }) => {
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" fontWeight={600} sx={{ color: '#cbd5e1', mb: 1 }}>
-                      Target Deployment Region (Dropdown)
+                      Target Deployment Region
                     </Typography>
-                    <TextField select fullWidth value={targetRegion} onChange={(e) => setTargetRegion(e.target.value)} variant="outlined" size="small" sx={inputStyles}>
-                      {REGIONS.map((grp) => [
-                        <MenuItem key={grp.group} disabled sx={{ fontWeight: 800, color: '#818cf8 !important', opacity: 1 }}>
-                          ▼ {grp.group}
-                        </MenuItem>,
-                        ...grp.items.map((reg) => (
-                          <MenuItem key={reg} value={reg} sx={{ pl: 4 }}>
-                            • {reg}
-                          </MenuItem>
-                        ))
-                      ])}
+                    <TextField
+                      select
+                      fullWidth
+                      value={targetRegion}
+                      onChange={(e) => setTargetRegion(e.target.value)}
+                      variant="outlined"
+                      size="small"
+                      sx={inputStyles}
+                      SelectProps={{
+                        displayEmpty: true,
+                        renderValue: (selected) => {
+                          if (!selected) {
+                            return <Typography variant="body2" sx={{ color: '#94a3b8' }}>Select target region...</Typography>;
+                          }
+                          return selected;
+                        }
+                      }}
+                    >
+                      <MenuItem value="" sx={{ color: '#94a3b8' }}>
+                        Select target region...
+                      </MenuItem>
+                      {REGIONS.map((reg) => (
+                        <MenuItem
+                          key={reg.value}
+                          value={reg.value}
+                          sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                        >
+                          <span>{reg.value}</span>
+                          <span style={{ color: '#64748b', fontSize: '0.75rem', marginLeft: '16px' }}>
+                            {reg.group}
+                          </span>
+                        </MenuItem>
+                      ))}
                     </TextField>
                   </Grid>
 
                   <Grid item xs={12} sm={6}>
                     <Typography variant="body2" fontWeight={600} sx={{ color: '#cbd5e1', mb: 1 }}>
-                      Optimization Goal (Dropdown)
+                      Optimization Goals
                     </Typography>
-                    <TextField select fullWidth value={optimizationGoal} onChange={(e) => setOptimizationGoal(e.target.value)} variant="outlined" size="small" sx={inputStyles}>
-                      {OPTIMIZATION_GOALS.map((goal) => (
-                        <MenuItem key={goal.label} value={goal.label}>
-                          <Box>
-                            <Typography variant="body2" fontWeight={600}>
-                              {goal.label}
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>
-                              {goal.desc}
-                            </Typography>
-                          </Box>
-                        </MenuItem>
-                      ))}
-                    </TextField>
+                    <FormControl fullWidth size="small">
+                      <Select
+                        multiple
+                        displayEmpty
+                        value={optimizationGoals}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const updated = typeof val === 'string' ? val.split(',') : val;
+                          setOptimizationGoals(updated);
+                        }}
+                        renderValue={(selected) => {
+                          if (!selected || selected.length === 0) {
+                            return <Typography variant="body2" sx={{ color: '#94a3b8' }}>Select goals...</Typography>;
+                          }
+                          return (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                              {selected.map((val) => (
+                                <Chip
+                                  key={val}
+                                  label={val.split(' ')[0] + ' ' + (val.split(' ')[1] || '')}
+                                  size="small"
+                                  onDelete={(e) => {
+                                    e.stopPropagation();
+                                    setOptimizationGoals(optimizationGoals.filter((g) => g !== val));
+                                  }}
+                                  sx={{
+                                    backgroundColor: 'rgba(99, 102, 241, 0.25)',
+                                    color: '#818cf8',
+                                    fontWeight: 600,
+                                    height: 22,
+                                    fontSize: '0.75rem',
+                                    '& .MuiChip-deleteIcon': { color: '#818cf8', '&:hover': { color: '#f8fafc' } }
+                                  }}
+                                />
+                              ))}
+                            </Box>
+                          );
+                        }}
+                        sx={{
+                          color: '#f8fafc',
+                          backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                          borderRadius: '10px',
+                          '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255, 255, 255, 0.12)' },
+                          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#818cf8' },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#818cf8' },
+                          '& .MuiSvgIcon-root': { color: '#94a3b8' }
+                        }}
+                      >
+                        {OPTIMIZATION_GOALS.map((goal) => (
+                          <MenuItem key={goal.label} value={goal.label} sx={{ py: 1, px: 2 }}>
+                            <Checkbox
+                              checked={optimizationGoals.includes(goal.label)}
+                              size="small"
+                              sx={{ color: '#818cf8', '&.Mui-checked': { color: '#818cf8' }, mr: 1, p: 0 }}
+                            />
+                            <Box>
+                              <Typography variant="body2" fontWeight={600} sx={{ color: '#f8fafc' }}>
+                                {goal.label}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block' }}>
+                                {goal.desc}
+                              </Typography>
+                            </Box>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
 
                   <Grid item xs={12}>
